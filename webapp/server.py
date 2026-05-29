@@ -222,8 +222,11 @@ async def tab_system(request: Request):
 
 @app.post("/api/refresh", response_class=HTMLResponse)
 async def api_refresh(request: Request):
-    # Simulate a delay for the hackathon demo
-    await asyncio.sleep(1.5)
+    global base_agent_state
+    print("User clicked Refresh: Re-running agent pipeline to pull live data...")
+    agent = build_agent()
+    base_agent_state = agent.run()
+    print("Agent state refreshed successfully!")
     return templates.TemplateResponse(request=request, name="sidebar.html", context={"request": request, "state": base_agent_state})
 
 if __name__ == "__main__":
