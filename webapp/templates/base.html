@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,33 +8,80 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Plotly -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
     <style>
         body {
-            background-color: #F8FAFC; /* slate-50 */
-            color: #0F172A; /* slate-900 */
+            background-color: #fafafa; /* zinc-50 */
         }
+        /* Custom scrollbar for a premium feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d8; /* zinc-300 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1aa; /* zinc-400 */
+        }
+
+        /* Premium Glass/Card Panels */
         .glass-panel {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0; /* slate-200 */
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-            border-radius: 0.5rem;
+            background: #ffffff;
+            border: 1px solid #e4e4e7; /* zinc-200 */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border-radius: 1rem;
         }
+        
+        /* Navigation Tabs */
         .tab-btn {
-            padding: 0.5rem 1rem;
+            padding: 0.625rem 1.25rem;
             cursor: pointer;
-            border-bottom: 2px solid transparent;
-            color: #64748B; /* slate-500 */
+            border-radius: 0.5rem;
+            color: #71717a; /* zinc-500 */
             font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
         }
         .tab-btn:hover {
-            color: #0F172A; /* slate-900 */
+            color: #18181b; /* zinc-900 */
+            background-color: #f4f4f5; /* zinc-100 */
         }
         .tab-btn.active {
-            border-bottom: 2px solid #2563EB; /* blue-600 */
-            color: #2563EB;
+            background-color: #18181b; /* zinc-900 */
+            color: #ffffff;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
     <script>
@@ -44,32 +91,42 @@
         }
     </script>
 </head>
-<body class="flex h-screen overflow-hidden bg-slate-50 text-slate-900 font-sans">
+<body class="flex h-screen overflow-hidden text-zinc-900 font-sans">
     <!-- Sidebar -->
-    <aside class="w-64 glass-panel m-4 flex flex-col shadow-sm" id="sidebar-container">
+    <aside class="w-72 glass-panel m-4 flex flex-col shadow-sm border-zinc-200" id="sidebar-container">
         {% include 'sidebar.html' %}
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col p-4 overflow-y-auto">
-        <header class="mb-8 mt-2">
-            <h1 class="text-3xl font-bold text-slate-900">Engineering Talent Intelligence Agent</h1>
-            <p class="text-slate-500 mt-2">In a layoff, the loudest engineer keeps their job. The best engineer loses theirs. We change that.</p>
+    <main class="flex-1 flex flex-col pt-8 px-8 pb-4 overflow-y-auto">
+        <header class="mb-8 max-w-5xl">
+            <h1 class="text-3xl font-bold tracking-tight text-zinc-900">Engineering Talent Intelligence</h1>
+            <p class="text-zinc-500 mt-2 text-sm leading-relaxed max-w-2xl">
+                In a layoff, the loudest engineer keeps their job. The best engineer loses theirs. We change that using data from GitHub, Slack, and Calendar.
+            </p>
         </header>
 
         <!-- Tabs Navigation -->
-        <nav class="flex space-x-6 mb-6 border-b border-slate-200">
-            <button class="tab-btn active transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/overview" hx-target="#tab-content" hx-trigger="click">Overview</button>
-            <button class="tab-btn transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/performance" hx-target="#tab-content" hx-trigger="click">Performance & Layoff</button>
-            <button class="tab-btn transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/burnout" hx-target="#tab-content" hx-trigger="click">Health & Burnout</button>
-            <button class="tab-btn transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/chat" hx-target="#tab-content" hx-trigger="click">HR Assistant</button>
-            <button class="tab-btn transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/system" hx-target="#tab-content" hx-trigger="click">System & SQL</button>
+        <nav class="flex space-x-2 mb-8 p-1.5 bg-zinc-100/50 rounded-xl border border-zinc-200/50 w-max">
+            <button class="tab-btn active" onclick="setActiveTab(this)" hx-get="/tabs/overview" hx-target="#tab-content" hx-trigger="click">Overview</button>
+            <button class="tab-btn" onclick="setActiveTab(this)" hx-get="/tabs/performance" hx-target="#tab-content" hx-trigger="click">Performance Matrix</button>
+            <button class="tab-btn" onclick="setActiveTab(this)" hx-get="/tabs/burnout" hx-target="#tab-content" hx-trigger="click">Burnout Profiles</button>
+            <button class="tab-btn" onclick="setActiveTab(this)" hx-get="/tabs/chat" hx-target="#tab-content" hx-trigger="click">AI HR Assistant</button>
+            <button class="tab-btn" onclick="setActiveTab(this)" hx-get="/tabs/system" hx-target="#tab-content" hx-trigger="click">System & SQL</button>
         </nav>
 
         <!-- Dynamic Tab Content -->
-        <div id="tab-content" hx-get="/tabs/overview" hx-trigger="load">
-            <!-- Content will be loaded here -->
-            <div class="animate-pulse">Loading...</div>
+        <div id="tab-content" class="flex-1" hx-get="/tabs/overview" hx-trigger="load">
+            <!-- Loading State -->
+            <div class="animate-pulse flex flex-col space-y-4 max-w-5xl">
+                <div class="h-8 bg-zinc-200 rounded-md w-1/4"></div>
+                <div class="h-32 bg-zinc-200 rounded-xl w-full"></div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="h-24 bg-zinc-200 rounded-xl"></div>
+                    <div class="h-24 bg-zinc-200 rounded-xl"></div>
+                    <div class="h-24 bg-zinc-200 rounded-xl"></div>
+                </div>
+            </div>
         </div>
     </main>
 </body>
