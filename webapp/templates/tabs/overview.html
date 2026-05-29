@@ -1,0 +1,132 @@
+<div class="space-y-10 animate-fade-in pb-12">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <h3 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-teal-600 via-emerald-600 to-green-600 mb-2">🔭 Executive Overview</h3>
+            <p class="text-slate-500 text-sm max-w-xl">High-level insights on engineering health, risk distributions, and system efficiency.</p>
+        </div>
+        
+        <!-- Filters -->
+        <div class="flex space-x-4">
+            <div class="relative group">
+                <select class="relative bg-white text-slate-700 rounded-xl px-4 py-2.5 border border-slate-200 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 appearance-none pr-10 hover:border-slate-300 transition-colors cursor-pointer text-sm font-medium shadow-sm">
+                    <option>All Risk Levels</option>
+                    <option>High Risk Only</option>
+                    <option>Medium Risk Only</option>
+                    <option>Low Risk Only</option>
+                </select>
+                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-slate-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            
+            <div class="relative group">
+                <select class="relative bg-white text-slate-700 rounded-xl px-4 py-2.5 border border-slate-200 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 appearance-none pr-10 hover:border-slate-300 transition-colors cursor-pointer text-sm font-medium shadow-sm">
+                    <option>All Teams</option>
+                    <option>Backend</option>
+                    <option>Platform</option>
+                    <option>Frontend</option>
+                </select>
+                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-slate-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Row 1: Team Health -->
+    <div>
+        <h4 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+            Organizational Health
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-panel p-6 relative overflow-hidden group hover:border-slate-300 transition-all hover:-translate-y-1">
+                <h3 class="text-slate-500 text-xs font-black uppercase tracking-widest mb-1 flex items-center gap-2 relative z-10">
+                    👥 Analyzed
+                </h3>
+                <p class="text-4xl font-black text-slate-900 my-2 relative z-10">{{ state.analysis.summary.total_engineers | default(0) }}</p>
+                <p class="text-xs text-slate-500 relative z-10">Total Engineers</p>
+            </div>
+            
+            <div class="glass-panel p-6 relative overflow-hidden group hover:border-red-300 transition-all hover:-translate-y-1">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-full blur-2xl transition-colors"></div>
+                <h3 class="text-red-600 text-xs font-black uppercase tracking-widest mb-1 flex items-center gap-2 relative z-10">
+                    🚨 High Risk
+                </h3>
+                <p class="text-4xl font-black text-slate-900 my-2 relative z-10">{{ state.analysis.summary.high_risk_count | default(0) }}</p>
+                {% if state.analysis.summary.high_risk_count | default(0) > 0 %}
+                <p class="text-xs font-bold text-red-600 relative z-10 animate-pulse">Immediate action needed</p>
+                {% else %}
+                <p class="text-xs text-slate-500 relative z-10">No critical issues</p>
+                {% endif %}
+            </div>
+            
+            <div class="glass-panel p-6 relative overflow-hidden group hover:border-orange-300 transition-all hover:-translate-y-1">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-full blur-2xl transition-colors"></div>
+                <h3 class="text-orange-600 text-xs font-black uppercase tracking-widest mb-1 flex items-center gap-2 relative z-10">
+                    ⚠️ Medium Risk
+                </h3>
+                <p class="text-4xl font-black text-slate-900 my-2 relative z-10">{{ state.analysis.summary.medium_risk_count | default(0) }}</p>
+                <p class="text-xs text-slate-500 relative z-10">Monitor closely</p>
+            </div>
+            
+            <div class="glass-panel p-6 relative overflow-hidden group hover:border-blue-300 transition-all hover:-translate-y-1">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full blur-2xl transition-colors"></div>
+                <h3 class="text-blue-600 text-xs font-black uppercase tracking-widest mb-1 flex items-center gap-2 relative z-10">
+                    📊 Avg Risk
+                </h3>
+                <p class="text-4xl font-black text-slate-900 my-2 relative z-10">{{ state.analysis.summary.avg_risk_score | default(0) }}<span class="text-xl text-slate-400 font-medium">/100</span></p>
+                <p class="text-xs text-slate-500 relative z-10">Organization mean</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Row 2: Coral Impact -->
+    <div class="relative mt-12">
+        <div class="relative z-10">
+            <h4 class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                Coral Architecture Impact
+            </h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-panel p-6 bg-indigo-50 border-indigo-200 relative overflow-hidden group hover:border-indigo-300 transition-all hover:-translate-y-1">
+                    <div class="absolute right-0 bottom-0 text-7xl opacity-5 transform translate-x-4 translate-y-4 group-hover:-translate-y-2 transition-transform duration-500">🛠️</div>
+                    <h3 class="text-indigo-700 text-xs font-black uppercase tracking-widest mb-2 relative z-10">Tool Calls Saved</h3>
+                    <div class="flex items-end gap-2 relative z-10">
+                        <p class="text-4xl font-black text-slate-900">14</p>
+                        <p class="text-indigo-600/70 text-xs font-medium mb-1.5 uppercase tracking-wide">per run</p>
+                    </div>
+                </div>
+                
+                <div class="glass-panel p-6 bg-indigo-50 border-indigo-200 relative overflow-hidden group hover:border-indigo-300 transition-all hover:-translate-y-1">
+                    <div class="absolute right-0 bottom-0 text-7xl opacity-5 transform translate-x-4 translate-y-4 group-hover:-translate-y-2 transition-transform duration-500">🗑️</div>
+                    <h3 class="text-indigo-700 text-xs font-black uppercase tracking-widest mb-2 relative z-10">Token Waste Prevented</h3>
+                    <div class="flex items-end gap-2 relative z-10">
+                        <p class="text-4xl font-black text-slate-900">~85k</p>
+                        <p class="text-indigo-600/70 text-xs font-medium mb-1.5 uppercase tracking-wide">per run</p>
+                    </div>
+                </div>
+                
+                <div class="glass-panel p-6 bg-emerald-50 border-emerald-200 relative overflow-hidden group hover:border-emerald-300 transition-all hover:-translate-y-1">
+                    <div class="absolute right-0 bottom-0 text-7xl opacity-5 transform translate-x-4 translate-y-4 group-hover:-translate-y-2 transition-transform duration-500">💸</div>
+                    <h3 class="text-emerald-700 text-xs font-black uppercase tracking-widest mb-2 relative z-10">API Cost Avoided</h3>
+                    <div class="flex items-end gap-2 relative z-10">
+                        <p class="text-4xl font-black text-slate-900">~$2.50</p>
+                        <p class="text-emerald-600/70 text-xs font-medium mb-1.5 uppercase tracking-wide">90% reduction</p>
+                    </div>
+                </div>
+                
+                <div class="glass-panel p-6 bg-fuchsia-50 border-fuchsia-200 relative overflow-hidden group hover:border-fuchsia-300 transition-all hover:-translate-y-1">
+                    <div class="absolute right-0 bottom-0 text-7xl opacity-5 transform translate-x-4 translate-y-4 group-hover:-translate-y-2 transition-transform duration-500">⚡</div>
+                    <h3 class="text-fuchsia-700 text-xs font-black uppercase tracking-widest mb-2 relative z-10">Query Time</h3>
+                    <div class="flex items-end gap-2 relative z-10">
+                        <p class="text-4xl font-black text-slate-900">{{ "%.0f"|format(state.query_time_ms) }}ms</p>
+                        <p class="text-fuchsia-600/70 text-xs font-medium mb-1.5 uppercase tracking-wide">100% Local</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

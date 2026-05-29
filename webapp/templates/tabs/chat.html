@@ -1,0 +1,51 @@
+<div class="space-y-6 animate-fade-in flex flex-col h-full max-h-[80vh]">
+    <h3 class="text-2xl font-bold">💬 AI HR Assistant</h3>
+    <p class="text-gray-400">Ask me anything about the team's health, burnout risks, or ask me to draft emails!</p>
+    
+    <div class="glass-panel p-4 flex-1 overflow-y-auto" id="chat-history">
+        {% if chat_history %}
+            {% for msg in chat_history %}
+                <div class="mb-4 flex {% if msg.role == 'user' %}justify-end{% else %}justify-start{% endif %}">
+                    <div class="max-w-[75%] p-3 rounded-lg {% if msg.role == 'user' %}bg-blue-600 text-white rounded-br-none{% else %}bg-gray-800 text-gray-200 rounded-bl-none border border-gray-700{% endif %}">
+                        {{ msg.content | safe | replace('\n', '<br>') }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center text-gray-500 my-10">
+                <p>No messages yet. Ask a question to get started!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="space-y-3">
+        <h5 class="font-semibold text-gray-300">⚡ Quick Actions</h5>
+        <div class="flex flex-wrap gap-2">
+            <button hx-post="/api/chat" hx-vals='{"prompt": "Please draft a manager alert for the highest risk engineer."}' hx-target="#chat-history" hx-swap="beforeend" class="bg-gray-800 hover:bg-gray-700 text-white py-1 px-3 rounded-full border border-gray-600 transition text-sm">
+                Draft Manager Alert
+            </button>
+            <button hx-post="/api/chat" hx-vals='{"prompt": "Please draft an empathetic Slack DM to the highest risk engineer."}' hx-target="#chat-history" hx-swap="beforeend" class="bg-gray-800 hover:bg-gray-700 text-white py-1 px-3 rounded-full border border-gray-600 transition text-sm">
+                Draft Slack DM
+            </button>
+            <button hx-post="/api/chat" hx-vals='{"prompt": "Hey, does anyone have high risk?"}' hx-target="#chat-history" hx-swap="beforeend" class="bg-gray-800 hover:bg-gray-700 text-white py-1 px-3 rounded-full border border-gray-600 transition text-sm">
+                Who is high risk?
+            </button>
+        </div>
+        
+        <form hx-post="/api/chat" hx-target="#chat-history" hx-swap="beforeend" hx-on::after-request="this.reset()" class="flex space-x-2 mt-4">
+            <input type="text" name="prompt" placeholder="Ask about the team's burnout risk..." class="flex-1 bg-gray-900 border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-blue-500" required>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition">
+                Send
+            </button>
+        </form>
+    </div>
+</div>
+<script>
+    // Scroll chat to bottom after update
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if(evt.detail.target.id === 'chat-history') {
+            var chatHistory = document.getElementById('chat-history');
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+    });
+</script>

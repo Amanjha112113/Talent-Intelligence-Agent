@@ -1,0 +1,216 @@
+<div class="space-y-10 animate-fade-in pb-12">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <h3 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mb-2">🏆 Performance Matrix</h3>
+            <p class="text-slate-500 text-sm max-w-xl">Evaluate engineers based on code contributions, collaboration, reliability, and availability. AI highlights hidden gems and overrated visibility.</p>
+        </div>
+    </div>
+
+    <!-- Layoff Risk Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+        {% set silent_count = 0 %}
+        {% set overrated_count = 0 %}
+        {% for k, r in state.layoff_risks.items() %}
+            {% if r.is_silent_hero %}{% set silent_count = silent_count + 1 %}{% endif %}
+            {% if r.is_overrated %}{% set overrated_count = overrated_count + 1 %}{% endif %}
+        {% endfor %}
+        
+        <div class="glass-panel p-8 bg-blue-50 border-blue-200 relative overflow-hidden group hover:border-blue-300 transition-colors">
+            <div class="flex items-start justify-between relative z-10">
+                <div>
+                    <h3 class="text-blue-700 text-xs font-black uppercase tracking-widest mb-1 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                        Silent Heroes
+                    </h3>
+                    <p class="text-5xl font-black text-slate-900 my-3">{{ silent_count }}</p>
+                    <p class="text-slate-600 text-sm leading-relaxed max-w-[200px]">High impact engineers lacking visibility. <strong class="text-red-600">At risk of unfair layoff.</strong></p>
+                </div>
+                <div class="text-5xl opacity-50 group-hover:scale-110 transition-transform">🦸</div>
+            </div>
+        </div>
+        
+        <div class="glass-panel p-8 bg-orange-50 border-orange-200 relative overflow-hidden group hover:border-orange-300 transition-colors">
+            <div class="flex items-start justify-between relative z-10">
+                <div>
+                    <h3 class="text-orange-700 text-xs font-black uppercase tracking-widest mb-1 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Overrated
+                    </h3>
+                    <p class="text-5xl font-black text-slate-900 my-3">{{ overrated_count }}</p>
+                    <p class="text-slate-600 text-sm leading-relaxed max-w-[200px]">Low code impact but highly visible. <strong class="text-orange-600">Often retained unfairly.</strong></p>
+                </div>
+                <div class="text-5xl opacity-50 group-hover:scale-110 transition-transform">⚠️</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div>
+        <h3 class="text-xl font-bold mb-6 text-slate-800">Engineer Grades</h3>
+        
+        {% if not state.performance_grades %}
+        <div class="glass-panel p-8 text-center text-slate-500 rounded-2xl border border-slate-200">
+            <div class="text-4xl mb-3 opacity-50">📉</div>
+            No performance data available. Run the analysis first.
+        </div>
+        {% else %}
+            <div class="grid grid-cols-1 gap-4">
+                {% for g in state.performance_grades %}
+                    {% set risk_profile = state.layoff_risks.get(g.engineer_name) %}
+                    {% set grade_color = "text-slate-500" %}
+                    {% set grade_bg = "bg-slate-100 border-slate-200" %}
+                    
+                    {% if g.grade == "A" or g.grade == "B" %}
+                        {% set grade_color = "text-emerald-600" %}
+                        {% set grade_bg = "bg-emerald-50 border-emerald-200" %}
+                    {% elif g.grade == "C" %}
+                        {% set grade_color = "text-yellow-600" %}
+                        {% set grade_bg = "bg-yellow-50 border-yellow-200" %}
+                    {% elif g.grade == "D" %}
+                        {% set grade_color = "text-orange-600" %}
+                        {% set grade_bg = "bg-orange-50 border-orange-200" %}
+                    {% elif g.grade == "F" %}
+                        {% set grade_color = "text-red-600" %}
+                        {% set grade_bg = "bg-red-50 border-red-200" %}
+                    {% endif %}
+                    
+                    <details class="glass-panel group rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300 hover:border-slate-300 bg-white" open>
+                        <summary class="p-5 cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
+                            <div class="flex items-center gap-5">
+                                <div class="w-14 h-14 rounded-2xl {{ grade_bg }} border flex items-center justify-center">
+                                    <span class="text-3xl font-black {{ grade_color }}">{{ g.grade }}</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold text-slate-900 tracking-wide">{{ g.engineer_name }}</h4>
+                                    <p class="text-sm text-slate-500">Total Score: <span class="font-bold text-slate-800">{{ "%.1f"|format(g.overall_score) }}</span></p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <!-- Badges -->
+                                <div class="flex flex-wrap gap-2">
+                                    {% if risk_profile %}
+                                        {% if risk_profile.is_silent_hero %}
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wider">
+                                                🦸 Silent Hero
+                                            </span>
+                                        {% endif %}
+                                        {% if risk_profile.is_overrated %}
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-700 text-xs font-bold uppercase tracking-wider">
+                                                ⚠️ Overrated
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                                    <svg class="w-5 h-5 transition-transform duration-300 group-open:rotate-180 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                        </summary>
+                        
+                        <div class="p-6 bg-slate-50 border-t border-slate-200">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div>
+                                    <h5 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> Sector Breakdown</h5>
+                                    
+                                    <div class="space-y-5">
+                                        <!-- Code -->
+                                        <div>
+                                            <div class="flex justify-between text-sm mb-1.5">
+                                                <span class="text-slate-600">💻 Code Contribution <span class="text-slate-400 text-xs ml-1">(40% Weight)</span></span>
+                                                <span class="font-mono text-slate-800">{{ "%.1f"|format(g.code_score) }}</span>
+                                            </div>
+                                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden border border-slate-300 shadow-inner">
+                                                <div class="bg-gradient-to-r from-blue-500 to-blue-400 h-2.5 rounded-full relative" style="width: {{ g.code_score }}%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Collab -->
+                                        <div>
+                                            <div class="flex justify-between text-sm mb-1.5">
+                                                <span class="text-slate-600">💬 Collaboration <span class="text-slate-400 text-xs ml-1">(25% Weight)</span></span>
+                                                <span class="font-mono text-slate-800">{{ "%.1f"|format(g.collab_score) }}</span>
+                                            </div>
+                                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden border border-slate-300 shadow-inner">
+                                                <div class="bg-gradient-to-r from-purple-500 to-purple-400 h-2.5 rounded-full" style="width: {{ g.collab_score }}%"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Reliability -->
+                                        <div>
+                                            <div class="flex justify-between text-sm mb-1.5">
+                                                <span class="text-slate-600">🚨 Reliability <span class="text-slate-400 text-xs ml-1">(20% Weight)</span></span>
+                                                <span class="font-mono text-slate-800">{{ "%.1f"|format(g.reliability_score) }}</span>
+                                            </div>
+                                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden border border-slate-300 shadow-inner">
+                                                <div class="bg-gradient-to-r from-emerald-500 to-emerald-400 h-2.5 rounded-full" style="width: {{ g.reliability_score }}%"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Availability -->
+                                        <div>
+                                            <div class="flex justify-between text-sm mb-1.5">
+                                                <span class="text-slate-600">📅 Availability <span class="text-slate-400 text-xs ml-1">(15% Weight)</span></span>
+                                                <span class="font-mono text-slate-800">{{ "%.1f"|format(g.availability_score) }}</span>
+                                            </div>
+                                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden border border-slate-300 shadow-inner">
+                                                <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 h-2.5 rounded-full" style="width: {{ g.availability_score }}%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if risk_profile %}
+                                <div class="flex flex-col justify-center">
+                                    <div class="p-6 rounded-2xl bg-white border border-slate-200 relative overflow-hidden shadow-sm">
+                                        <h5 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Perception Analytics</h5>
+                                        
+                                        <div class="flex items-end gap-3 mb-2">
+                                            <span class="text-5xl font-black {% if risk_profile.perception_gap > 0 %}text-emerald-600{% else %}text-red-600{% endif %}">
+                                                {{ "%+.1f"|format(risk_profile.perception_gap) }}
+                                            </span>
+                                        </div>
+                                        <p class="text-sm text-slate-500 mb-4">Actual Performance vs Visibility Gap</p>
+
+                                        <div class="mb-4 grid grid-cols-2 gap-3">
+                                            <div class="bg-emerald-50 border border-emerald-200 p-2 rounded-lg">
+                                                <div class="text-[10px] text-emerald-700 uppercase font-bold tracking-wider mb-1">Strongest Area</div>
+                                                <div class="text-sm text-emerald-800 font-semibold flex items-center gap-1.5">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                                    {{ risk_profile.strength }}
+                                                </div>
+                                            </div>
+                                            <div class="bg-orange-50 border border-orange-200 p-2 rounded-lg">
+                                                <div class="text-[10px] text-orange-700 uppercase font-bold tracking-wider mb-1">Focus Area</div>
+                                                <div class="text-sm text-orange-800 font-semibold flex items-center gap-1.5">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                                    {{ risk_profile.focus_area }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        {% set badge_color = "blue" %}
+                                        {% if risk_profile.perception_gap > 10 %}
+                                            {% set badge_color = "emerald" %}
+                                        {% elif risk_profile.perception_gap < -10 %}
+                                            {% set badge_color = "orange" %}
+                                        {% else %}
+                                            {% set badge_color = "slate" %}
+                                        {% endif %}
+                                        
+                                        <p class="text-sm text-{{ badge_color }}-800 bg-{{ badge_color }}-50 p-3 rounded-xl border border-{{ badge_color }}-200 leading-relaxed">
+                                            <strong>Insight:</strong> {{ risk_profile.insight }}
+                                        </p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </details>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>

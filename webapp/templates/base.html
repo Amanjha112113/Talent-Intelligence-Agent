@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Intelligence Agent</title>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <style>
+        body {
+            background-color: #F8FAFC; /* slate-50 */
+            color: #0F172A; /* slate-900 */
+        }
+        .glass-panel {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0; /* slate-200 */
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            border-radius: 0.5rem;
+        }
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #64748B; /* slate-500 */
+            font-weight: 500;
+        }
+        .tab-btn:hover {
+            color: #0F172A; /* slate-900 */
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #2563EB; /* blue-600 */
+            color: #2563EB;
+        }
+    </style>
+    <script>
+        function setActiveTab(element) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
+    </script>
+</head>
+<body class="flex h-screen overflow-hidden bg-slate-50 text-slate-900 font-sans">
+    <!-- Sidebar -->
+    <aside class="w-64 glass-panel m-4 flex flex-col shadow-sm" id="sidebar-container">
+        {% include 'sidebar.html' %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col p-4 overflow-y-auto">
+        <header class="mb-8 mt-2">
+            <h1 class="text-3xl font-bold text-slate-900">Engineering Talent Intelligence Agent</h1>
+            <p class="text-slate-500 mt-2">In a layoff, the loudest engineer keeps their job. The best engineer loses theirs. We change that.</p>
+        </header>
+
+        <!-- Tabs Navigation -->
+        <nav class="flex space-x-6 mb-6 border-b border-slate-200">
+            <button class="tab-btn active transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/overview" hx-target="#tab-content" hx-trigger="click">Overview</button>
+            <button class="tab-btn transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/performance" hx-target="#tab-content" hx-trigger="click">Performance & Layoff</button>
+            <button class="tab-btn transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/burnout" hx-target="#tab-content" hx-trigger="click">Health & Burnout</button>
+            <button class="tab-btn transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/chat" hx-target="#tab-content" hx-trigger="click">HR Assistant</button>
+            <button class="tab-btn transition-colors" onclick="setActiveTab(this)" hx-get="/tabs/system" hx-target="#tab-content" hx-trigger="click">System & SQL</button>
+        </nav>
+
+        <!-- Dynamic Tab Content -->
+        <div id="tab-content" hx-get="/tabs/overview" hx-trigger="load">
+            <!-- Content will be loaded here -->
+            <div class="animate-pulse">Loading...</div>
+        </div>
+    </main>
+</body>
+</html>

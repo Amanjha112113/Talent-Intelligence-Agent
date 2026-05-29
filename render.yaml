@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: talent-intelligence-agent
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn webapp.server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: USE_MOCK_DATA
+        value: "false"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: SLACK_TOKEN
+        sync: false
