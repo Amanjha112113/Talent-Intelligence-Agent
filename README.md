@@ -265,4 +265,8 @@ We believe in open operations. Please review the following before contributing:
 - ⚖️ [MIT License](LICENSE)
 
 ---
-*Built with ❤️ for Engineering Managers everywhere. Hackathon 2026.*
+*Built with ❤️ for Engineering Managers everywhere.*
+
+### 🏴‍☠️ Built for the WeMakeDevs "Pirates of the Coral-bean" Hackathon
+**Hoist the Jolly Roger and set sail on the high seas of data!** 
+This project was built for the WeMakeDevs Pirates of the Coral-bean hackathon (May 25 – May 31). We built agents that query any API, database, or file as SQL, powered by Coral. No ETL, no warehouse, no glue code. Just you, your crew, and the open ocean of data.
