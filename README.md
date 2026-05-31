@@ -88,47 +88,47 @@ When a manager accesses the dashboard, FastAPI simply serves this static diction
 ```mermaid
 graph TD
     %% External Data Sources
-    subgraph SaaS APIs [External SaaS Environments]
-        GH[GitHub API<br/>(Commits, PRs)]
-        SL[Slack API<br/>(Messages, Latency)]
-        GC[Google Calendar API<br/>(Meetings, Declines)]
+    subgraph SaaS_APIs [External SaaS Environments]
+        GH["GitHub API (Commits, PRs)"]
+        SL["Slack API (Messages, Latency)"]
+        GC["Google Calendar API (Meetings, Declines)"]
     end
 
     %% Connectors and Storage
-    subgraph Data Layer [Data Ingestion Layer]
-        CON[Python Connectors<br/>(BaseConnector Pattern)]
-        JSON[(Temporary .jsonl files<br/>Disk Buffer)]
+    subgraph Data_Layer [Data Ingestion Layer]
+        CON["Python Connectors (BaseConnector Pattern)"]
+        JSON[("Temporary .jsonl files, Disk Buffer")]
     end
 
     %% Core Engine
-    subgraph Analytical Core [Coral In-Memory Engine]
-        CORAL{Coral Engine / DuckDB<br/>read_json_auto()}
-        SQL[Burnout & Perf Queries<br/>Cross-Source JOINs]
+    subgraph Analytical_Core [Coral In-Memory Engine]
+        CORAL{"Coral Engine / DuckDB read_json_auto()"}
+        SQL["Burnout & Perf Queries (Cross-Source JOINs)"]
     end
 
     %% AI and App Logic
-    subgraph Intelligence Layer [Reasoning Pipeline]
-        PIPE[Agent Pipeline Orchestrator]
-        GEM[Google Gemini API<br/>(gemini-2.5-flash)]
+    subgraph Intelligence_Layer [Reasoning Pipeline]
+        PIPE["Agent Pipeline Orchestrator"]
+        GEM["Google Gemini API (gemini-2.5-flash)"]
     end
 
     %% Presentation
     subgraph Presentation [Web Dashboard]
-        FAST[FastAPI Server<br/>(Pre-computed State)]
-        UI[Glassmorphism UI<br/>(HTML/CSS/Jinja2)]
+        FAST["FastAPI Server (Pre-computed State)"]
+        UI["Glassmorphism UI (HTML/CSS/Jinja2)"]
     end
 
     GH --> CON
     SL --> CON
     GC --> CON
-    CON -->|Standardizes & Dumps| JSON
-    JSON -->|Instant Virtual Read| CORAL
-    CORAL -->|Executes Complex Aggregations| SQL
-    SQL -->|Feeds Normalized Metrics| PIPE
-    PIPE -->|Constructs System Prompts| GEM
-    GEM -->|Returns Intervention Drafts| PIPE
-    PIPE -->|Injects Final State| FAST
-    FAST -->|Serves 0ms Latency UI| UI
+    CON -->|"Standardizes & Dumps"| JSON
+    JSON -->|"Instant Virtual Read"| CORAL
+    CORAL -->|"Executes Complex Aggregations"| SQL
+    SQL -->|"Feeds Normalized Metrics"| PIPE
+    PIPE -->|"Constructs System Prompts"| GEM
+    GEM -->|"Returns Intervention Drafts"| PIPE
+    PIPE -->|"Injects Final State"| FAST
+    FAST -->|"Serves 0ms Latency UI"| UI
 ```
 
 ## 7. Deep Dive: Each Component
