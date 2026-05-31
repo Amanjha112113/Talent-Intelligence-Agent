@@ -2,6 +2,7 @@
   <h1>🧠 Talent Intelligence Agent</h1>
   <p><strong>Autonomous Engineering Operations, Burnout Prevention, and Talent Analytics</strong></p>
   <p><i>An AI Agent powered by DuckDB, FastAPI, and Google Gemini.</i></p>
+  <p>🏴‍☠️ <b>Built for the WeMakeDevs "Pirates of the Coral-bean" Hackathon</b> 🏴‍☠️</p>
   
   <br>
 
